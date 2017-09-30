@@ -1,24 +1,50 @@
-import { autorun, computed, observable } from "mobx";
+import MobxPlus from "./MobxPlus";
 
-class Store {
-  @observable public app: any;
+const state = {
+  name: "Alice",
+  age: 12,
+  school: {
+    location: "Shanghai",
+  },
+};
 
-  constructor() {
-    this.app = { version: 1 };
-    this.updateVersion = this.updateVersion.bind(this);
+const mutations = {
+  UPDATE_USERINFO(newState: any, data: any) {
+    console.log("[Mutations] Triggerred.");
+    newState.name = data.name;
+    newState.age = data.age;
+    newState.school = { location: data.location };
+  },
+};
 
-    autorun(() => {
-      console.log("report", this.report);
+const actions = {
+  LOAD_USERINFO({ commit, newState }: any, data: any) {
+    console.log("[Actions] Triggerred.");
+    setTimeout(() => {
+      commit("UPDATE_USERINFO", {
+        name: "Jackie",
+        age: 15,
+        location: "Beijing",
+      });
     });
-  }
+  },
+};
 
-  @computed get report() {
-    return "The version of App is " + this.app.version;
-  }
+const getters = {
+  report(currentState: any) {
+    return `School Location: ${currentState.school.location}`;
+  },
+};
 
-  public updateVersion() {
-    this.app.version = this.app.version + 1;
-  }
-}
+const watcher = function() {
+  console.log(`[Watcher] Current Mobx+ instance =>`, this);
+  console.log(`[Watcher] this.report changed =>`, this.report);
+};
 
-export default new Store();
+export const store = new MobxPlus({
+  state,
+  actions,
+  mutations,
+  getters,
+  watcher,
+});

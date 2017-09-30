@@ -23,7 +23,7 @@ interface IStoreConstructor {
   errorHandler?: () => void;
 }
 
-export default class Store {
+export default class MobxPlus {
   /**
    * 状态容器。一个Store对象维护一份状态容器。
    */
