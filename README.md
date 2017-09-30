@@ -1,8 +1,8 @@
 # Mobx Plus
 
-> Use mobx like vuex. Still Working on it. There are two versions of different usage. See branch dev-v1 & dev-v2 for more detail. The source code of mobxplus locates @ src/store/MobxPlus.ts
+> Use mobx like vuex. There are two versions of different usage. See branch dev-v1 & dev-v2 for more detail. The source code of mobxplus locates @ src/store/MobxPlus.ts
 
-> This demo is based on typescript + react.
+> Though this project needs further development, you could run demo now. This demo is based on typescript + react.
 
 ## Branch: dev-v1
 ```javascript
