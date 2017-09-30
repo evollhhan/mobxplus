@@ -7,24 +7,30 @@
 ## Branch: dev-v1
 ```javascript
 //
-// Just use it like vuex
-//
-import store from "./store";
+// Create Store
+// ----
+import MobxPlus from "./MobxPlus";
 
-// commit
+const store = new MobxPlus({
+  state,
+  actions,
+  mutations,
+  getters,
+  watcher
+})
+
+//
+// Just use it like vuex
+// ----
+// 1. commit
 store.commit("EventName", EventData);
-// dispatch
+// 2. dispatch
 store.dispatch("LOAD_USERINFO");
 ```
 
-## Branch: dev-v2
-```javascript
-// Consider ts lint.
-commit.EventName(EventData)
-```
+## How to view demo
 
-## View Demo
-
+1. clone / download source code
 1. npm install
 2. webpack
 3. open index.html
