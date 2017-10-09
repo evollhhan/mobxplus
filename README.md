@@ -4,7 +4,7 @@
 
 > Though this project needs further development, you could run demo now. This demo is based on typescript + react.
 
-## Branch: dev-v1
+## Branch: dev-v2
 ```javascript
 //
 // Create Store
@@ -20,12 +20,12 @@ const store = new MobxPlus({
 })
 
 //
-// Just use it like vuex
+// consider ts line
 // ----
 // 1. commit
-store.commit("EventName", EventData);
+store.commit.EventName(EventData);
 // 2. dispatch
-store.dispatch("LOAD_USERINFO");
+store.dispatch.LOAD_USERINFO(EventData);
 ```
 
 ## How to view demo

@@ -1,5 +1,6 @@
 import { inject, observer } from "mobx-react";
 import * as React from "react";
+import { IUserDispatch } from "./store/refer";
 
 interface IStore {
   store?: any;
@@ -14,7 +15,8 @@ export default class App extends React.Component<IStore, undefined> {
 
   public hanlder() {
     const store = this.props.store;
-    store.dispatch("LOAD_USERINFO");
+    const dispatch: IUserDispatch = this.props.store.dispatch;
+    dispatch.LOAD_USERINFO();
   }
 
   public render() {

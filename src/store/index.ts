@@ -1,6 +1,7 @@
-import MobxPlus from "./MobxPlus";
+import { IMutationMap, MobxPlus } from "./MobxPlus";
+import { IUserAction, IUserState } from "./refer";
 
-const state = {
+const state: IUserState = {
   name: "Alice",
   age: 12,
   school: {
@@ -8,20 +9,20 @@ const state = {
   },
 };
 
-const mutations = {
-  UPDATE_USERINFO(newState: any, data: any) {
+const mutations: IMutationMap = {
+  UPDATE_USERINFO(newState: any, payload: any) {
     console.log("[Mutations] Triggerred.");
-    newState.name = data.name;
-    newState.age = data.age;
-    newState.school = { location: data.location };
+    newState.name = payload.name;
+    newState.age = payload.age;
+    newState.school = { location: payload.location };
   },
 };
 
-const actions = {
-  LOAD_USERINFO({ commit, newState }: any, data: any) {
+const actions: IUserAction = {
+  LOAD_USERINFO({ commit, newState }, data) {
     console.log("[Actions] Triggerred.");
     setTimeout(() => {
-      commit("UPDATE_USERINFO", {
+      commit.UPDATE_USERINFO({
         name: "Jackie",
         age: 15,
         location: "Beijing",

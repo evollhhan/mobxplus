@@ -10,8 +10,26 @@ import {
 
 useStrict(true);
 
-interface IFunctionMap {
+export interface IFunctionMap {
   [key: string]: (...args: any[]) => any;
+}
+
+export type TMutation = (newState: any, payload: any) => void;
+
+export interface IMutationMap {
+  [key: string]: TMutation;
+}
+
+export type TPayloadFunction = (payload?: any) => void;
+
+export interface IActionOptions {
+  commit?: any;
+  dispatch?: any;
+  newState?: any;
+}
+
+export interface IActionMap {
+  [key: string]: (options: IActionOptions, payload: any) => any;
 }
 
 interface IStoreConstructor {
@@ -23,7 +41,17 @@ interface IStoreConstructor {
   errorHandler?: () => void;
 }
 
-export default class MobxPlus {
+export class MobxPlus {
+  /**
+   * 提交一个同步变更。
+   */
+  public commit: any;
+
+  /**
+   * 提交一个异步变更。
+   */
+  public dispatch: any;
+
   /**
    * 状态容器。一个Store对象维护一份状态容器。
    */
@@ -46,17 +74,18 @@ export default class MobxPlus {
   constructor(opt: IStoreConstructor) {
     const { state, mutations, actions, getters, errorHandler } = opt;
 
-    // Init state, actions, mutations
+    // Init state, commit, dispatch
     this.state = state;
     this.actions = actions;
-    this.mutations = mutations;
+    this.commit = Object.create(null);
+    this.dispatch = Object.create(null);
 
     // Bind getters
     this.bindGetters(getters);
 
     // Bind this to exposed functions
-    this.commit = this.commit.bind(this);
-    this.dispatch = this.dispatch.bind(this);
+    this.bindCommit(mutations);
+    this.bindDispatch(actions);
 
     // Bind Watcher
     let { watcher }  = opt;
@@ -77,26 +106,8 @@ export default class MobxPlus {
    * @param eventData 事件状态
    */
   @action
-  public commit(eventName: string, eventData?: any) {
-    const newState = {...this.state};
-    this.mutations[eventName](newState, eventData);
-    Object.assign(this.state, newState);
-  }
-
-  /**
-   * 发起一个异步的更新Store行为。
-   * @param eventName 事件名称
-   * @param eventData 事件状态
-   */
-  public dispatch(eventName: string, eventData?: any) {
-    this.actions[eventName].call(
-      null,
-      {
-        commit: this.commit,
-        newState: {...this.state},
-      },
-      eventData,
-    );
+  public confirmCommit(state: any) {
+    Object.assign(this.state, state);
   }
 
   /**
@@ -108,6 +119,39 @@ export default class MobxPlus {
       extendObservable(this, {
         [key]: computed(getters[key].bind(null, this.state)),
       });
+    });
+  }
+
+  /**
+   * 将mutations绑定到commit上
+   * @param mutations 需要绑定的mutations
+   */
+  private bindCommit(mutations: IFunctionMap) {
+    Object.keys(mutations).map((key) => {
+      this.commit[key] = (eventData: any) => {
+        const newState = {...this.state};
+        mutations[key](newState, eventData);
+        this.confirmCommit(newState);
+      };
+    });
+  }
+
+  /**
+   * 将actions绑定到
+   * @param actions 需要绑定的actions
+   */
+  private bindDispatch(actions: IFunctionMap) {
+    Object.keys(actions).map((key) => {
+      this.dispatch[key] = (eventData: any) => {
+        this.actions[key].call(
+          null,
+          {
+            commit: this.commit,
+            newState: {...this.state},
+          },
+          eventData,
+        );
+      };
     });
   }
 }
